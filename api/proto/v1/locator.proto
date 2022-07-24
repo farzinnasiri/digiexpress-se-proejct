@@ -1,0 +1,44 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+package dlocator;
+option go_package = "./";
+
+service CourierLocator {
+  // use this procedure to push the latest locations of drivers.
+  // guarantees to return an ack message for each location push but not in the same order.
+  rpc PushGpsPoints(stream CourierGpsPoint) returns (google.protobuf.Empty);
+
+  // use this procedure to find all the drivers within radius of a given point.
+  // there obviously are some limits on the radius.
+  rpc FindNearbyCouriers(FindNearbyCouriersQuery) returns (CourierList);
+}
+
+message CourierGpsPoint {
+  string driverId = 1;
+  Location location = 2;
+}
+
+message Location {
+  double latitude = 1;
+  double longitude = 2;
+}
+
+message FindNearbyCouriersQuery {
+  Location target = 1;
+  Distance radius = 2;
+}
+
+enum Unit {
+  Meters = 0;
+  Kilometers = 1;
+}
+
+message Distance {
+  double amount = 1;
+  Unit unit = 2;
+}
+
+message CourierList {
+  CourierGpsPoint points = 1;
+}

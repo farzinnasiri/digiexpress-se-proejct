@@ -1,0 +1,5 @@
+logging:
+  level: "error"
+  prettyPrint: true
+grpc:
+  port: 9000

@@ -1,0 +1,37 @@
+# options for analysis running
+run:
+  # the parallel processes to run
+  concurrency: 5
+  # timeout for each lint process
+  deadline: 5m
+
+  # include test files or not
+  tests: true
+
+  # directories to skip
+  skip-dirs:
+    - mocks
+
+# output configuration options
+output:
+  # colored-line-number|line-number|json|tab|checkstyle
+  format: colored-line-number
+
+# all available settings of specific linters
+linters-settings:
+  lll:
+    line-length: 140
+
+linters:
+  enable-all: true
+  disable:
+    - nosnakecase
+    - paralleltest
+    - exhaustivestruct
+    - interfacer
+    - ireturn
+    - maligned
+    - golint
+    - scopelint
+    - gomnd
+    - wsl
