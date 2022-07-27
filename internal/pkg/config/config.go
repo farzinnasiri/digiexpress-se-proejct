@@ -12,11 +12,13 @@ const (
 	AppName         = "dlocator"
 	FilePath        = "./configs/config.yml"
 	DefaultGrpcPort = 8080
+	DefaultRedisTTL = 300
 )
 
 type AppConfig struct {
 	Logging LoggingConfig
 	Grpc    GrpcConfig
+	Redis   RedisConfig
 }
 
 func NewAppConfig() (*AppConfig, error) {
@@ -32,6 +34,7 @@ func setDefaultConfigs() {
 	viper.SetDefault("log.level", "warn")
 	viper.SetDefault("grpc.appName", AppName)
 	viper.SetDefault("grpc.port", DefaultGrpcPort)
+	viper.SetDefault("redis.ttl", DefaultRedisTTL)
 }
 
 func readEnvConfigs() {
