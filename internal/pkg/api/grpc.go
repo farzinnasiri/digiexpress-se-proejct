@@ -5,7 +5,6 @@ import (
 	"net"
 
 	cfg "github.com/digiexpress/dlocator/internal/pkg/config"
-	dv1 "github.com/digiexpress/dlocator/pkg/api/v1"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpclogrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
@@ -19,7 +18,7 @@ type DLocatorGrpcServer struct {
 	server   *grpc.Server
 }
 
-func NewDLocatorGrpcServer(courierLocator dv1.CourierLocatorServer, config *cfg.AppConfig) (*DLocatorGrpcServer, error) {
+func NewDLocatorGrpcServer(courierLocator CourierLocatorServer, config *cfg.AppConfig) (*DLocatorGrpcServer, error) {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Grpc.Port))
 	if err != nil {
 		return nil, fmt.Errorf("failed to listen on port %d: %w", config.Grpc.Port, err)
@@ -31,7 +30,7 @@ func NewDLocatorGrpcServer(courierLocator dv1.CourierLocatorServer, config *cfg.
 		grpcrecovery.UnaryServerInterceptor(),
 	}
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpcmiddleware.ChainUnaryServer(interceptors...)))
-	dv1.RegisterCourierLocatorServer(grpcServer, courierLocator)
+	RegisterCourierLocatorServer(grpcServer, courierLocator)
 
 	return &DLocatorGrpcServer{listener: listener, server: grpcServer}, nil
 }
