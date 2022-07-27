@@ -27,3 +27,7 @@ func Error(msg string, err error) {
 func Panic(msg string, err error) {
 	logrus.WithError(err).Panicln(msg)
 }
+
+func Warning(msg string) {
+	logrus.Warning(msg)
+}
