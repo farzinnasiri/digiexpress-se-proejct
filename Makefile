@@ -9,6 +9,8 @@ PROTO_DIR := api/proto
 STUBS_DIR := pkg/api
 PROTOC ?= protoc
 PROTOC_OPTIONS ?= -I.
+BINARY_NAME=dlocator
+BINARY_PATH=bin
 
 # linter config
 LINTER_VERSION = v1.47.0
@@ -31,7 +33,8 @@ run: ## to start the application
 .PHONY: .pre-check-protoc
 
 protoc: | .pre-check-protoc ## to generate all necessary protobuf files
-	@$(foreach proto,$(PROTOS),$(PROTOC) $(PROTOC_OPTIONS) --go_out=plugins=grpc:$(STUBS_DIR)/$(word 1,$(subst /, ,$(subst $(PROTO_DIR), ,$(proto)))) $(proto)${\n})
+	@#$(foreach proto,$(PROTOS),$(PROTOC) $(PROTOC_OPTIONS) --go_out=plugins=grpc:$(STUBS_DIR)/$(word 1,$(subst /, ,$(subst $(PROTO_DIR), ,$(proto)))) $(proto)${\n})
+	@$(foreach proto,$(PROTOS),$(PROTOC) $(PROTOC_OPTIONS) --go_out=./internal/pkg/api/ --go-grpc_out=./internal/pkg/api/ api/proto/v1/*.proto)
 .PHONY: protoc
 
 bench:
@@ -54,6 +57,7 @@ devtools: .pre-check-wire .pre-check-test-tools .pre-check-protoc .pre-check-for
 dependencies: ## to install the dependencies
 	@go mod tidy -compat=1.17
 	@go mod download
+	@go mod vendor
 .PHONY: dependencies
 
 clean: ## to remove generated files
@@ -63,12 +67,12 @@ clean: ## to remove generated files
 
 .pre-check-formatting-tools:
 	@if [ -z "$$(which gofumpt)" ]; then go install mvdan.cc/gofumpt@latest; fi
-	@if [ -z "$$(which gci)" ]; then go get github.com/daixiang0/gci; fi
+	@#if [ -z "$$(which gci)" ]; then go get github.com/daixiang0/gci; fi
 .PHONY: .pre-check-formatting-tools
 
 fmt: | .pre-check-formatting-tools ## to run go formatter on all source codes across the project
 	@gofumpt -l -w ${SOURCES}
-	@gci write ${SOURCES}
+	@#gci write ${SOURCES}
 .PHONY: fmt
 
 .bin/golangci-lint:
@@ -111,6 +115,18 @@ coverage.cover: $(SRCS) $(PBS) Makefile
 .remove_empty_dirs: ## to remove empty directories across all project
 	@-find . -type d -print | xargs rmdir 2>/dev/null | true
 .PHONY: .remove_empty_dirs
+
+
+build:
+	@echo "Cleanning..."
+	@echo $(BINARY_PATH)
+	@rm -rf $(BINARY_PATH)
+	@mkdir $(BINARY_PATH)
+	@echo "Building DLocator..."
+	@go build -o $(BINARY_PATH) -v ./...
+	@echo "Building is finished"
+
+
 
 # helpers
 
