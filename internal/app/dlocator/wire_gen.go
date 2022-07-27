@@ -7,8 +7,10 @@
 package dlocator
 
 import (
+	"github.com/digiexpress/dlocator/internal/app/dlocator/courier"
 	"github.com/digiexpress/dlocator/internal/pkg/api"
 	"github.com/digiexpress/dlocator/internal/pkg/config"
+	"github.com/digiexpress/dlocator/internal/pkg/service"
 )
 
 // Injectors from wire.go:
@@ -18,7 +20,14 @@ func CreateApp() (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	courierLocatorServer := InjectCourierLocatorServer()
+	cacheServiceImpl, err := service.NewCacheService(appConfig)
+	if err != nil {
+		return nil, err
+	}
+	cacheRepositoryImpl := courier.NewCacheRepository(cacheServiceImpl)
+	commandHandler := courier.NewCourierCommandHandler(cacheRepositoryImpl)
+	queryHandler := courier.NewCourierQueryHandler(cacheRepositoryImpl)
+	courierLocatorServer := InjectCourierLocatorServer(commandHandler, queryHandler)
 	dLocatorGrpcServer, err := api.NewDLocatorGrpcServer(courierLocatorServer, appConfig)
 	if err != nil {
 		return nil, err

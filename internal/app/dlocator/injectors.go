@@ -1,9 +1,10 @@
 package dlocator
 
 import (
-	dv1 "github.com/digiexpress/dlocator/pkg/api/v1"
+	"github.com/digiexpress/dlocator/internal/app/dlocator/courier"
+	dv1 "github.com/digiexpress/dlocator/internal/pkg/api"
 )
 
-func InjectCourierLocatorServer() dv1.CourierLocatorServer {
-	return NewCourierLocatorHandler()
+func InjectCourierLocatorServer(commandHandler courier.CommandHandler, queryHandler courier.QueryHandler) dv1.CourierLocatorServer {
+	return NewCourierLocatorHandler(commandHandler, queryHandler)
 }
