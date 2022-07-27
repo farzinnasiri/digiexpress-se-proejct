@@ -1,9 +1,11 @@
+//go:build exclud
+
 package benchmarks
 
 import (
 	"math/rand"
 
-	dv1 "github.com/digiexpress/dlocator/pkg/api/v1"
+	dv1 "github.com/digiexpress/dlocator/internal/pkg/api"
 )
 
 func randomFloat64(min, max float64) float64 {
