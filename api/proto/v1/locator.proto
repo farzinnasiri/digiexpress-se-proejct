@@ -2,7 +2,7 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 
 package dlocator;
-option go_package = "./";
+option go_package = "api";
 
 service CourierLocator {
   // use this procedure to push the latest locations of drivers.
@@ -40,5 +40,5 @@ message Distance {
 }
 
 message CourierList {
-  CourierGpsPoint points = 1;
+  repeated CourierGpsPoint points = 1;
 }
